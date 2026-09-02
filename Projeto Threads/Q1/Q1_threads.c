@@ -3,7 +3,7 @@
 #include <pthread.h>
 
 #define N 5 // Número de threads;
-#define NUM_ARRAY 10 // Número de elementos do vetor;
+#define NUM_ARRAY 23 // Número de elementos do vetor;
 
 typedef struct{
     int pos_init;
@@ -26,27 +26,27 @@ void* Sum(void* subarray){
 
 int* SetToZero(int* array){
     for (int i = 0; i < NUM_ARRAY; i++){
-        array[i] = 5;
+        array[i] = 29;
     }
 
     return array;
 }
 
 //No Scheduler, vamos designar para cada uma das threads quantos elementos elas vão processar;
-int* Scheduler(){ 
-    float partition = NUM_ARRAY / N;
+int* Scheduler(int num_array, int n){ 
+    float partition = num_array / n;
     int i = 0;
     int nat_partition = partition;
 
     int* schedule = NULL;
 
-    if (!(schedule = (int*) malloc(N * sizeof(int)))){
+    if (!(schedule = (int*) malloc(n * sizeof(int)))){
         printf("Erro de alocação de memória no scheduler!\n");
         return NULL;
     }
 
-    while (i < N){
-        if ((i == (N - 1)) && (nat_partition < partition)) schedule[i] = nat_partition + 1;
+    while (i < n){
+        if ((i == (n - 1))) schedule[i] = nat_partition + (num_array % n);
         else schedule[i] = nat_partition;
 
         i++;
@@ -60,7 +60,7 @@ int main(){
     int rc;
     int* numeric_array = NULL;
     int pos = 0;
-    int* schedule = Scheduler();
+    int* schedule = Scheduler(NUM_ARRAY, N);
     int part_results[N];
     int total = 0;
     _subarray __subarray[N];
@@ -98,6 +98,9 @@ int main(){
 
         total += _array->partial;
     }
+
+    free(numeric_array);
+    free(schedule);
 
     printf("Total: %d\n", total);
 }
