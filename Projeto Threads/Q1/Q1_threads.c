@@ -3,7 +3,7 @@
 #include <pthread.h>
 
 #define N 5 // Número de threads;
-#define NUM_ARRAY 23 // Número de elementos do vetor;
+#define NUM_ARRAY 3 // Número de elementos do vetor;
 
 typedef struct{
     int pos_init;
@@ -21,6 +21,8 @@ void* Sum(void* subarray){
         array->partial += array->data[j];
     }
 
+    printf("Parcial: %d\n", array->partial);
+
     pthread_exit((void*) array);
 }
 
@@ -33,21 +35,25 @@ int* SetToZero(int* array){
 }
 
 //No Scheduler, vamos designar para cada uma das threads quantos elementos elas vão processar;
-int* Scheduler(int num_array, int n){ 
-    float partition = num_array / n;
+int* Scheduler(int num_array, int n){
+    int partition = num_array / n; //Primeiro fazemos a partição inteira da array;
+    int remainder = num_array % n;
     int i = 0;
-    int nat_partition = partition;
 
     int* schedule = NULL;
 
-    if (!(schedule = (int*) malloc(n * sizeof(int)))){
+    if (!(schedule = (int*) malloc(n * sizeof(int)))){ //Alocamos a memória para o schedule, pois queremos retornar a partição de cada Thread;
         printf("Erro de alocação de memória no scheduler!\n");
         return NULL;
     }
 
     while (i < n){
-        if ((i == (n - 1))) schedule[i] = nat_partition + (num_array % n);
-        else schedule[i] = nat_partition;
+        schedule[i] = partition;
+        
+        if (remainder > 0){
+            schedule[i]++;
+            remainder--;
+        }
 
         i++;
     }
@@ -55,14 +61,13 @@ int* Scheduler(int num_array, int n){
     return schedule;
 }
 
-int main(){
+int main(int argc, char** argv){
     pthread_t thread_list[N];
+    int pos, total = 0;
     int rc;
     int* numeric_array = NULL;
-    int pos = 0;
     int* schedule = Scheduler(NUM_ARRAY, N);
     int part_results[N];
-    int total = 0;
     _subarray __subarray[N];
 
     if (!(numeric_array = (int*) malloc(NUM_ARRAY * sizeof(int)))){
