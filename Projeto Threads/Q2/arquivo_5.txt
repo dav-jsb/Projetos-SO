@@ -1,5 +1,3 @@
 Maria 3
-Regina 2
+Regina 5
 Eduarda 4
-Sofia 2
-Leticia 1
