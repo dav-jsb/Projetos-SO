@@ -56,11 +56,11 @@ void* read_rotina(void *arg){
         leitores_ativos++;
         pthread_mutex_unlock(&mutex);
 
-        printf("Leitura %d: ", index-4);
-        for(int i = 0; i < NUM_WRITE; i++){ // Imprime os elementos dos arrays
-            printf("%d ", array[i]);
-        }
-        printf("\n\n");
+        printf("Leitura %d: %d %d %d %d %d\n\n", index-4, array[0], array[1], array[2], array[3], array[4]);
+        // Printamos desta maneira para que cada thread mostre que está lendo simultaneamente sem que haja problemas no print.
+        // Caso o array fosse printado em um for, as threads teriam um overlap, de forma que uma mesma thread pode entrar no loop e printar
+        // simultaneamente, dificultando a leitura dos valores. Desta forma, apesar do código ser pouco escalonável, não há concorrência entre
+        // os prints e todas as threads de leitura tem acesso simultaneo ao print do array
 
         pthread_mutex_lock(&mutex);
         leitores_ativos--;
