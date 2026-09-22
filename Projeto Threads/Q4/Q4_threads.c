@@ -14,7 +14,7 @@ typedef struct{
 
 pthread_barrier_t barrier;
 float coeficients[I][I] = {{10, -1, 2, 0}, {-1, 11, -1 , 3}, {2, -1, 10, -1}, {0, 3, -1, 8}};
-float variable[I] = {1, 1, 1, 1};
+float variable[I];
 float independent[I] = {6, 25, -11, 15};
 
 void InitBarrier(int count, pthread_barrier_t* barrier_var){
@@ -44,6 +44,10 @@ int Scheduler(int* schedule){
 
     if (!partition) count = I;
     return count;
+}
+
+void SetVariable(){
+    for (int i = 0; i < I; i++) variable[i] = 1;
 }
 
 void* Jacobi(void* thread_file){
@@ -81,6 +85,7 @@ int main(){
     int count, rc, jc;
     int pos = 0;
     
+    SetVariable();
     count = Scheduler(schedule);
     InitBarrier(count, &barrier);
     
